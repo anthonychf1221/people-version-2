@@ -4,6 +4,9 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/Anthony/Desktop/kotlin/PeopleGitHub/ExamplePeople/app/src/main/res/layout/activity_main.xml" value="0.19010416666666666" />
+        <entry key="..\:/Users/Anthony/Desktop/kotlin/PeopleGitHub/ExamplePeople/app/src/main/res/layout/activity_people_list.xml" value="0.1" />
+        <entry key="..\:/Users/Anthony/Desktop/kotlin/PeopleGitHub/ExamplePeople/app/src/main/res/layout/row_person.xml" value="0.14947916666666666" />
+        <entry key="..\:/Users/Anthony/Desktop/kotlin/PeopleGitHub/ExamplePeople/app/src/main/res/menu/main_menu.xml" value="0.124609375" />
       </map>
     </option>
   </component>

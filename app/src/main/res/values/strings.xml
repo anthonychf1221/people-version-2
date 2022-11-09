@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">ExamplePeople</string>
+    <string name="app_name">People</string>
+    <string name="tlt_people_list">People</string>
+
+    <!-- messages -->
+    <string name="msgNoRecords">No records found</string>
+
 </resources>
