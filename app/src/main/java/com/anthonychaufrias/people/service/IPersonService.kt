@@ -9,4 +9,13 @@ interface IPersonService {
     @GET("personas")
     fun getPeopleList(@Query("busqueda") filter: String): Call<PersonListResponse>
 
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json"
+    )
+    @POST("insertar-persona")
+    fun addPerson(
+        @Body person: Person
+    ): Call<PersonSaveResponse>
+
 }

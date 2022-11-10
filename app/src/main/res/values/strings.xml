@@ -1,8 +1,21 @@
 <resources>
     <string name="app_name">People</string>
     <string name="tlt_people_list">People</string>
+    <string name="tlt_person_new">New person</string>
+    <string name="tlt_person_edit">Edit person</string>
+
+    <string name="lblFullName">Full name</string>
+    <string name="lblDocumentID">ID</string>
+    <string name="lblCountry">Country</string>
+    <string name="lblSelectCountry">Select your country</string>
+    <string name="lblActionSave">Save</string>
+    <string name="lblActionAdd">Add a person</string>
 
     <!-- messages -->
+    <string name="msgSuccess">Your data has been saved successfully</string>
+    <string name="msgFailure">There was a problem saving your data. Please, try again</string>
     <string name="msgNoRecords">No records found</string>
+    <string name="requiredField">This field is required</string>
+    <string name="docIDLen">ID must be %s digits</string>
 
 </resources>
