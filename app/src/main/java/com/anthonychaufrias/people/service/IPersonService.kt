@@ -18,4 +18,14 @@ interface IPersonService {
         @Body person: Person
     ): Call<PersonSaveResponse>
 
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json"
+    )
+    @POST("modificar-persona")
+    fun updatePerson(
+        @Body person: Person
+    ): Call<PersonSaveResponse>
+
+
 }

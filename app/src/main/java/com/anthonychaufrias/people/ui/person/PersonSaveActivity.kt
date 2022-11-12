@@ -9,7 +9,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.anthonychaufrias.people.R
 import com.anthonychaufrias.people.core.Values
@@ -46,6 +45,7 @@ class PersonSaveActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
     }
 
     private fun initUI(){
+        setFields()
         loadCountries(objPerson.countryID)
         btnSave.setOnClickListener { view ->
             saveData()
@@ -64,6 +64,13 @@ class PersonSaveActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
 
         this.supportActionBar!!.setTitle(title)
         this.supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+    }
+
+    private fun setFields(){
+        if( action == Values.UPDATE ){
+            txtFullName.setText(objPerson.fullName)
+            txtDocumentID.setText(objPerson.documentID)
+        }
     }
 
     private fun saveData(){

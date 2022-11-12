@@ -37,7 +37,9 @@ class PeopleListActivity : AppCompatActivity() {
 
     private fun initUI(){
         rvPeople.layoutManager = LinearLayoutManager(this)
-        rvPeople.adapter = PersonListAdapter()
+        rvPeople.adapter = PersonListAdapter {
+            selectPersonToUpdate(it)
+        }
         loadPeople("")
         viewModel.liveDataPeopleList.observe(this, Observer { list ->
             (rvPeople.adapter as PersonListAdapter).setData(list)
@@ -55,6 +57,13 @@ class PeopleListActivity : AppCompatActivity() {
 
     private fun setMessageNoRecords(size: Int) {
         lblNoRecords.visibility = if (size == 0) View.VISIBLE else View.GONE
+    }
+
+    private fun selectPersonToUpdate(person: Person){
+        val intent = Intent(this, PersonSaveActivity::class.java)
+        intent.putExtra(PersonSaveActivity.ARG_ITEM, person)
+        intent.putExtra(PersonSaveActivity.ARG_ACTION, Values.UPDATE)
+        startActivityForResult(intent, 1)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

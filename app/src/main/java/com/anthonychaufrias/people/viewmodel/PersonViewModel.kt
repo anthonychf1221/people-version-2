@@ -58,6 +58,9 @@ class PersonViewModel : ViewModel(){
             if( action == Values.INSERT ){
                 addPerson(person)
             }
+            else{
+                updatePerson(person)
+            }
         }
         catch(e: Exception){
             print(e.message)
@@ -78,7 +81,34 @@ class PersonViewModel : ViewModel(){
                     liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed("", ValidationResult.FAILURE))
                     return
                 }
+                if( !response.body()?.status.equals("Ok") ){
+                    liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed(response.body()?.message ?: "", ValidationResult.INVALID_DOCUMENT_ID))
+                    return
+                }
+                response.body()?.person.let { person ->
+                    liveDataPeopleSave.postValue(PersonSaveResult.OK(person))
+                }
+            }
+            override fun onFailure(call: Call<PersonSaveResponse>, t: Throwable) {
+                call.cancel()
+                liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed(t.message ?: "", ValidationResult.FAILURE))
+            }
+        })
+    }
 
+    private fun updatePerson(person: Person){
+        val validations = getFormValidation(person.fullName, person.documentID)
+        if( validations[0] != ValidationResult.OK ){
+            liveDataPeopleSave.postValue(PersonSaveResult.InvalidInputs(validations))
+            return
+        }
+        val call = service.updatePerson(person)
+        call.enqueue(object : Callback<PersonSaveResponse>{
+            override fun onResponse(call: Call<PersonSaveResponse>,response: Response<PersonSaveResponse>) {
+                if( response.body() == null ){
+                    liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed("", ValidationResult.FAILURE))
+                    return
+                }
                 if( !response.body()?.status.equals("Ok") ){
                     liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed(response.body()?.message ?: "", ValidationResult.INVALID_DOCUMENT_ID))
                     return
@@ -98,10 +128,22 @@ class PersonViewModel : ViewModel(){
         if( action == Values.INSERT ){
             addPersonToList(person)
         }
+        else{
+            updatePersonFromList(person)
+        }
     }
 
     private fun addPersonToList(person: Person){
         peopleList.add(person)
         liveDataPeopleList.value = peopleList
     }
+    private fun updatePersonFromList(person: Person){
+        for (item in peopleList.indices) {
+            if( peopleList[item].personID == person.personID ){
+                peopleList[item] = person
+            }
+        }
+        liveDataPeopleList.value = peopleList
+    }
+
 }
