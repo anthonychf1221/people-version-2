@@ -8,7 +8,7 @@ import com.anthonychaufrias.people.R
 import com.anthonychaufrias.people.model.Person
 import kotlinx.android.synthetic.main.row_person.view.*
 
-class PersonListAdapter(val onPersonClick: (Person) -> Unit): RecyclerView.Adapter<PersonListAdapter.SearchViewHolder>() {
+class PersonListAdapter(val onPersonClick: (Person) -> Unit, val onDeletePersonClick: (Person) -> Unit): RecyclerView.Adapter<PersonListAdapter.SearchViewHolder>() {
     var peopleList: List<Person> = emptyList()
     fun setData(list: List<Person>){
         peopleList = list
@@ -24,6 +24,7 @@ class PersonListAdapter(val onPersonClick: (Person) -> Unit): RecyclerView.Adapt
         holder.itemView.txtFullName.text = person.fullName
         holder.itemView.txtCountry.text = person.countryName
         holder.itemView.setOnClickListener { onPersonClick(person) }
+        holder.itemView.imgDelete.setOnClickListener { onDeletePersonClick(person) }
     }
 
     override fun getItemCount(): Int {

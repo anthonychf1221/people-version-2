@@ -27,5 +27,13 @@ interface IPersonService {
         @Body person: Person
     ): Call<PersonSaveResponse>
 
+    @Headers(
+        "Accept: application/json",
+        "Content-Type: application/json"
+    )
+    @POST("eliminar-persona")
+    fun deletePerson(
+        @Body person: Person
+    ): Call<PersonSaveResponse>
 
 }

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import com.anthonychaufrias.people.R
 import androidx.lifecycle.ViewModelProvider
@@ -37,9 +38,11 @@ class PeopleListActivity : AppCompatActivity() {
 
     private fun initUI(){
         rvPeople.layoutManager = LinearLayoutManager(this)
-        rvPeople.adapter = PersonListAdapter {
+        rvPeople.adapter = PersonListAdapter ({
             selectPersonToUpdate(it)
-        }
+        },{
+            deletePerson(it)
+        })
         loadPeople("")
         viewModel.liveDataPeopleList.observe(this, Observer { list ->
             (rvPeople.adapter as PersonListAdapter).setData(list)
@@ -64,6 +67,19 @@ class PeopleListActivity : AppCompatActivity() {
         intent.putExtra(PersonSaveActivity.ARG_ITEM, person)
         intent.putExtra(PersonSaveActivity.ARG_ACTION, Values.UPDATE)
         startActivityForResult(intent, 1)
+    }
+
+    private fun deletePerson(person: Person){
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.app_name))
+        builder.setMessage(getString(R.string.msgAreYouSure))
+
+        builder.setPositiveButton(R.string.answerYes) { dialog, which ->
+            viewModel.deletePerson(person)
+        }
+        builder.setNegativeButton(R.string.answerNo) { dialog, which ->
+        }
+        builder.show()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

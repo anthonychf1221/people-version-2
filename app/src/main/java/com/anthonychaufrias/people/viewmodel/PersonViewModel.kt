@@ -124,6 +124,31 @@ class PersonViewModel : ViewModel(){
         })
     }
 
+    fun deletePerson(person: Person){
+        try{
+            val call = service.deletePerson(person)
+            call.enqueue(object : Callback<PersonSaveResponse>{
+                override fun onResponse(call: Call<PersonSaveResponse>,response: Response<PersonSaveResponse>) {
+                    if( response.body() == null ){
+                        return
+                    }
+                    if( !response.body()?.status.equals("Ok") ){
+                        return
+                    }
+                    response.body()?.person.let {
+                        removePersonFromList(person)
+                    }
+                }
+                override fun onFailure(call: Call<PersonSaveResponse>, t: Throwable) {
+                    call.cancel()
+                }
+            })
+        }
+        catch(e: Exception){
+            print(e.message)
+        }
+    }
+
     fun refreshList(person: Person, action: Int){
         if( action == Values.INSERT ){
             addPersonToList(person)
@@ -145,5 +170,12 @@ class PersonViewModel : ViewModel(){
         }
         liveDataPeopleList.value = peopleList
     }
-
+    private fun removePersonFromList(person: Person){
+        for (item in peopleList.indices) {
+            if( peopleList[item].personID == person.personID ){
+                peopleList.removeAt(item)
+            }
+        }
+        liveDataPeopleList.value = peopleList
+    }
 }

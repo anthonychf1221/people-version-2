@@ -18,4 +18,9 @@
     <string name="requiredField">This field is required</string>
     <string name="docIDLen">ID must be %s digits</string>
 
+    <!-- dialogs / alerts -->
+    <string name="msgAreYouSure">Are you sure you want to delete this record?</string>
+    <string name="answerYes">Yes</string>
+    <string name="answerNo">No</string>
+
 </resources>
