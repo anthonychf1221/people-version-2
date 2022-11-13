@@ -3,8 +3,12 @@ package com.anthonychaufrias.people.ui.person
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
 import com.anthonychaufrias.people.R
 import androidx.lifecycle.ViewModelProvider
@@ -91,6 +95,34 @@ class PeopleListActivity : AppCompatActivity() {
             viewModel.refreshList(person, action)
         }
     }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.main_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_search -> {
+                val searchView = item.actionView as SearchView
+                searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener{
+                    override fun onQueryTextSubmit(query: String): Boolean {
+                        loadPeople(query)
+                        return true
+                    }
+                    override fun onQueryTextChange(newText: String): Boolean {
+                        if( newText.isEmpty() ){
+                            loadPeople("")
+                        }
+                        return true
+                    }
+                })
+            }
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true

@@ -23,4 +23,8 @@
     <string name="answerYes">Yes</string>
     <string name="answerNo">No</string>
 
+    <!-- menus -->
+    <string name="menu_settings">Settings</string>
+    <string name="menu_search">Search</string>
+
 </resources>
