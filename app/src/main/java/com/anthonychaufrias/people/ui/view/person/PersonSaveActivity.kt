@@ -1,4 +1,4 @@
-package com.anthonychaufrias.people.ui.person
+package com.anthonychaufrias.people.ui.view.person
 
 import android.app.Activity
 import android.content.Intent
@@ -12,11 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.anthonychaufrias.people.R
 import com.anthonychaufrias.people.core.Values
-import com.anthonychaufrias.people.model.Person
-import com.anthonychaufrias.people.model.PersonSaveResult
-import com.anthonychaufrias.people.model.ValidationResult
-import com.anthonychaufrias.people.viewmodel.CountryViewModel
-import com.anthonychaufrias.people.viewmodel.PersonViewModel
+import com.anthonychaufrias.people.data.model.Person
+import com.anthonychaufrias.people.data.model.PersonSaveResult
+import com.anthonychaufrias.people.data.model.ValidationResult
+import com.anthonychaufrias.people.ui.viewmodel.CountryViewModel
+import com.anthonychaufrias.people.ui.viewmodel.PersonViewModel
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_person_save.*
 

@@ -1,4 +1,4 @@
-package com.anthonychaufrias.people.ui.person
+package com.anthonychaufrias.people.ui.view.person
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -14,8 +14,8 @@ import com.anthonychaufrias.people.R
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.anthonychaufrias.people.core.Values
-import com.anthonychaufrias.people.model.Person
-import com.anthonychaufrias.people.viewmodel.PersonViewModel
+import com.anthonychaufrias.people.data.model.Person
+import com.anthonychaufrias.people.ui.viewmodel.PersonViewModel
 import kotlinx.android.synthetic.main.activity_people_list.*
 
 class PeopleListActivity : AppCompatActivity() {

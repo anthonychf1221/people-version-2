@@ -1,11 +1,11 @@
-package com.anthonychaufrias.people.viewmodel
+package com.anthonychaufrias.people.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.anthonychaufrias.people.core.RetrofitHelper
 import com.anthonychaufrias.people.core.Values
-import com.anthonychaufrias.people.model.*
-import com.anthonychaufrias.people.service.IPersonService
+import com.anthonychaufrias.people.data.model.*
+import com.anthonychaufrias.people.data.service.IPersonService
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

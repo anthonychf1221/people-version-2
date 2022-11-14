@@ -1,6 +1,6 @@
-package com.anthonychaufrias.people.service
+package com.anthonychaufrias.people.data.service
 
-import com.anthonychaufrias.people.model.CountryListResponse
+import com.anthonychaufrias.people.data.model.CountryListResponse
 import retrofit2.Call
 import retrofit2.http.GET
 
