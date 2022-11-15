@@ -3,25 +3,20 @@ package com.anthonychaufrias.people.ui.viewmodel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.anthonychaufrias.people.core.RetrofitHelper
 import com.anthonychaufrias.people.data.CountryRepository
 import com.anthonychaufrias.people.data.model.Country
-import com.anthonychaufrias.people.data.model.CountryListResponse
-import com.anthonychaufrias.people.data.service.ICountryService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import javax.inject.Inject
 
-class CountryViewModel : ViewModel(){
-    private val retrofit = RetrofitHelper.getRetrofit()
-    private val service: ICountryService = retrofit.create(ICountryService::class.java)
-
+@HiltViewModel
+class CountryViewModel @Inject constructor(
+    private val repository: CountryRepository
+) : ViewModel(){
     val liveDataCountryList = MutableLiveData<List<Country>>()
     val countryList  = mutableListOf<Country>()
     val countryNamesList = mutableListOf<String>()
     var selectedIndex: Int = 0
-    private val repository = CountryRepository()
 
     fun loadCountryList(selectedId:Int){
         viewModelScope.launch {

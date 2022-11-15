@@ -18,8 +18,10 @@ import com.anthonychaufrias.people.data.model.ValidationResult
 import com.anthonychaufrias.people.ui.viewmodel.CountryViewModel
 import com.anthonychaufrias.people.ui.viewmodel.PersonViewModel
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_person_save.*
 
+@AndroidEntryPoint
 class PersonSaveActivity : AppCompatActivity(), AdapterView.OnItemSelectedListener {
     private lateinit var countryViewModel: CountryViewModel
     private lateinit var personViewModel: PersonViewModel

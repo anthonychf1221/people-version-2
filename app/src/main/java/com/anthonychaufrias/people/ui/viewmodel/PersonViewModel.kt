@@ -8,16 +8,19 @@ import com.anthonychaufrias.people.data.PersonRepository
 import com.anthonychaufrias.people.data.model.*
 import com.anthonychaufrias.people.domain.SetPersonUseCase
 import com.anthonychaufrias.people.domain.UpdatePersonUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class PersonViewModel : ViewModel(){
+@HiltViewModel
+class PersonViewModel @Inject constructor(
+    private val repository: PersonRepository,
+    val setPersonUseCase: SetPersonUseCase,
+    val updatePersonUseCase: UpdatePersonUseCase
+) : ViewModel(){
     val liveDataPeopleList = MutableLiveData<MutableList<Person>>()
     val peopleList = mutableListOf<Person>()
     val liveDataPeopleSave = MutableLiveData<PersonSaveResult>()
-
-    private val repository = PersonRepository()
-    private val setPersonUseCase = SetPersonUseCase()
-    private val updatePersonUseCase = UpdatePersonUseCase()
 
     fun loadPeopleList(filter: String){
         try{
@@ -63,7 +66,7 @@ class PersonViewModel : ViewModel(){
     fun deletePerson(person: Person){
         try{
             viewModelScope.launch {
-                val deletedPersona: PersonSaveResponse? = repository.deletePerson(person)
+                val deletedPerson: PersonSaveResponse? = repository.deletePerson(person)
                 removePersonFromList(person)
                 liveDataPeopleList.value = peopleList
             }

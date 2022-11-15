@@ -16,8 +16,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.anthonychaufrias.people.core.Values
 import com.anthonychaufrias.people.data.model.Person
 import com.anthonychaufrias.people.ui.viewmodel.PersonViewModel
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_people_list.*
 
+@AndroidEntryPoint
 class PeopleListActivity : AppCompatActivity() {
     private lateinit var viewModel: PersonViewModel
 

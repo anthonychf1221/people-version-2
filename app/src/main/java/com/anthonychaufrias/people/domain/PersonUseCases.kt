@@ -5,6 +5,7 @@ import com.anthonychaufrias.people.data.PersonRepository
 import com.anthonychaufrias.people.data.model.Person
 import com.anthonychaufrias.people.data.model.PersonSaveResult
 import com.anthonychaufrias.people.data.model.ValidationResult
+import javax.inject.Inject
 
 object ValidatePersonUseCase {
     fun getFormValidation(name: String, docID: String): MutableList<ValidationResult> {
@@ -22,8 +23,7 @@ object ValidatePersonUseCase {
     }
 }
 
-class SetPersonUseCase {
-    private val repository = PersonRepository()
+class SetPersonUseCase @Inject constructor(private val repository: PersonRepository) {
 
     suspend operator fun invoke(person: Person): PersonSaveResult {
         val validations = ValidatePersonUseCase.getFormValidation(person.fullName, person.documentID)
@@ -42,8 +42,7 @@ class SetPersonUseCase {
     }
 }
 
-class UpdatePersonUseCase {
-    private val repository = PersonRepository()
+class UpdatePersonUseCase @Inject constructor(private val repository: PersonRepository) {
 
     suspend operator fun invoke(person: Person): PersonSaveResult {
         val validations = ValidatePersonUseCase.getFormValidation(person.fullName, person.documentID)

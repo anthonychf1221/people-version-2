@@ -3,9 +3,9 @@ package com.anthonychaufrias.people.data
 import com.anthonychaufrias.people.data.model.Person
 import com.anthonychaufrias.people.data.model.PersonSaveResponse
 import com.anthonychaufrias.people.data.service.PersonService
+import javax.inject.Inject
 
-class PersonRepository {
-    private val api = PersonService()
+class PersonRepository @Inject constructor(private val api: PersonService) {
 
     suspend fun getPeopleList(filter: String): MutableList<Person> {
         return api.getPeopleList(filter)
