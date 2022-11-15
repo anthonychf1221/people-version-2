@@ -2,10 +2,13 @@ package com.anthonychaufrias.people.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.anthonychaufrias.people.core.RetrofitHelper
+import com.anthonychaufrias.people.data.CountryRepository
 import com.anthonychaufrias.people.data.model.Country
 import com.anthonychaufrias.people.data.model.CountryListResponse
 import com.anthonychaufrias.people.data.service.ICountryService
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -18,25 +21,14 @@ class CountryViewModel : ViewModel(){
     val countryList  = mutableListOf<Country>()
     val countryNamesList = mutableListOf<String>()
     var selectedIndex: Int = 0
+    private val repository = CountryRepository()
 
     fun loadCountryList(selectedId:Int){
-        val call = service.getCountryList()
-        call.enqueue(object : Callback<CountryListResponse> {
-            override fun onResponse(call: Call<CountryListResponse>, response: Response<CountryListResponse>) {
-                if( response.body() == null ){
-                    return
-                }
-                if( !response.body()?.status.equals("Ok") ){
-                    return
-                }
-                response.body()?.results?.let { list ->
-                    fillListOfCountries(list, selectedId)
-                }
-            }
-            override fun onFailure(call: Call<CountryListResponse>, t: Throwable) {
-                call.cancel()
-            }
-        })
+        viewModelScope.launch {
+            val list: List<Country> = repository.getCountryList()
+            fillListOfCountries(list, selectedId);
+            liveDataCountryList.postValue(list)
+        }
     }
 
     private fun fillListOfCountries(list: List<Country>, selectedId:Int){

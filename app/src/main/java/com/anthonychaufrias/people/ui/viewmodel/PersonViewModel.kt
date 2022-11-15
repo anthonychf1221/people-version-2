@@ -2,55 +2,34 @@ package com.anthonychaufrias.people.ui.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.anthonychaufrias.people.core.RetrofitHelper
+import androidx.lifecycle.viewModelScope
 import com.anthonychaufrias.people.core.Values
+import com.anthonychaufrias.people.data.PersonRepository
 import com.anthonychaufrias.people.data.model.*
-import com.anthonychaufrias.people.data.service.IPersonService
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import com.anthonychaufrias.people.domain.SetPersonUseCase
+import com.anthonychaufrias.people.domain.UpdatePersonUseCase
+import kotlinx.coroutines.launch
 
 class PersonViewModel : ViewModel(){
-    private val retrofit = RetrofitHelper.getRetrofit()
-    private val service: IPersonService = retrofit.create(IPersonService::class.java)
-
     val liveDataPeopleList = MutableLiveData<MutableList<Person>>()
     val peopleList = mutableListOf<Person>()
     val liveDataPeopleSave = MutableLiveData<PersonSaveResult>()
 
-    fun loadPeopleList(filter: String){
-        val call = service.getPeopleList(filter)
-        call.enqueue(object : Callback<PersonListResponse>{
-            override fun onResponse(call: Call<PersonListResponse>, response: Response<PersonListResponse>) {
-                if( response.body() == null ){
-                    return
-                }
-                if( !response.body()?.status.equals("Ok") ){
-                    return
-                }
-                response.body()?.results?.let { list ->
-                    peopleList.addAll(list)
-                    liveDataPeopleList.postValue(list)
-                }
-            }
-            override fun onFailure(call: Call<PersonListResponse>, t: Throwable) {
-                call.cancel()
-            }
-        })
-    }
+    private val repository = PersonRepository()
+    private val setPersonUseCase = SetPersonUseCase()
+    private val updatePersonUseCase = UpdatePersonUseCase()
 
-    private fun getFormValidation(name: String, docID: String):MutableList<ValidationResult> {
-        val validations = mutableListOf<ValidationResult>()
-        if( name.isEmpty() ){
-            validations.add(ValidationResult.INVALID_NAME)
+    fun loadPeopleList(filter: String){
+        try{
+            viewModelScope.launch {
+                val list: MutableList<Person> = repository.getPeopleList(filter)
+                peopleList.addAll(list)
+                liveDataPeopleList.postValue(list)
+            }
         }
-        if( docID.length != Values.PERSON_DOCUMENT_LENGTH ){
-            validations.add(ValidationResult.INVALID_DOCUMENT_ID)
+        catch(e: Exception){
+            print(e.message)
         }
-        if( validations.size == 0 ){
-            validations.add(ValidationResult.OK)
-        }
-        return validations
     }
 
     fun savePerson(person: Person, action: Int){
@@ -68,81 +47,26 @@ class PersonViewModel : ViewModel(){
     }
 
     private fun addPerson(person: Person){
-        val validations = getFormValidation(person.fullName, person.documentID)
-        if( validations[0] != ValidationResult.OK ){
-            liveDataPeopleSave.postValue(PersonSaveResult.InvalidInputs(validations))
-            return
+        viewModelScope.launch {
+            val result: PersonSaveResult = setPersonUseCase(person)
+            liveDataPeopleSave.value = result
         }
-
-        val call = service.addPerson(person)
-        call.enqueue(object : Callback<PersonSaveResponse>{
-            override fun onResponse(call: Call<PersonSaveResponse>,response: Response<PersonSaveResponse>) {
-                if( response.body() == null ){
-                    liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed("", ValidationResult.FAILURE))
-                    return
-                }
-                if( !response.body()?.status.equals("Ok") ){
-                    liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed(response.body()?.message ?: "", ValidationResult.INVALID_DOCUMENT_ID))
-                    return
-                }
-                response.body()?.person.let { person ->
-                    liveDataPeopleSave.postValue(PersonSaveResult.OK(person))
-                }
-            }
-            override fun onFailure(call: Call<PersonSaveResponse>, t: Throwable) {
-                call.cancel()
-                liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed(t.message ?: "", ValidationResult.FAILURE))
-            }
-        })
     }
 
     private fun updatePerson(person: Person){
-        val validations = getFormValidation(person.fullName, person.documentID)
-        if( validations[0] != ValidationResult.OK ){
-            liveDataPeopleSave.postValue(PersonSaveResult.InvalidInputs(validations))
-            return
+        viewModelScope.launch {
+            val result: PersonSaveResult = updatePersonUseCase(person)
+            liveDataPeopleSave.value = result
         }
-        val call = service.updatePerson(person)
-        call.enqueue(object : Callback<PersonSaveResponse>{
-            override fun onResponse(call: Call<PersonSaveResponse>,response: Response<PersonSaveResponse>) {
-                if( response.body() == null ){
-                    liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed("", ValidationResult.FAILURE))
-                    return
-                }
-                if( !response.body()?.status.equals("Ok") ){
-                    liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed(response.body()?.message ?: "", ValidationResult.INVALID_DOCUMENT_ID))
-                    return
-                }
-                response.body()?.person.let { person ->
-                    liveDataPeopleSave.postValue(PersonSaveResult.OK(person))
-                }
-            }
-            override fun onFailure(call: Call<PersonSaveResponse>, t: Throwable) {
-                call.cancel()
-                liveDataPeopleSave.postValue(PersonSaveResult.OperationFailed(t.message ?: "", ValidationResult.FAILURE))
-            }
-        })
     }
 
     fun deletePerson(person: Person){
         try{
-            val call = service.deletePerson(person)
-            call.enqueue(object : Callback<PersonSaveResponse>{
-                override fun onResponse(call: Call<PersonSaveResponse>,response: Response<PersonSaveResponse>) {
-                    if( response.body() == null ){
-                        return
-                    }
-                    if( !response.body()?.status.equals("Ok") ){
-                        return
-                    }
-                    response.body()?.person.let {
-                        removePersonFromList(person)
-                    }
-                }
-                override fun onFailure(call: Call<PersonSaveResponse>, t: Throwable) {
-                    call.cancel()
-                }
-            })
+            viewModelScope.launch {
+                val deletedPersona: PersonSaveResponse? = repository.deletePerson(person)
+                removePersonFromList(person)
+                liveDataPeopleList.value = peopleList
+            }
         }
         catch(e: Exception){
             print(e.message)
