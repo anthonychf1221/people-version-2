@@ -37,7 +37,7 @@ class PersonSaveActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_person_save)
 
-        objPerson = intent.getSerializableExtra(ARG_ITEM) as Person
+        objPerson = intent.getParcelableExtra<Person>(ARG_ITEM) as Person
         action = intent.getIntExtra(ARG_ACTION, Values.INSERT) as Int
         setToolbar()
 
