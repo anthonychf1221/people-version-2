@@ -27,6 +27,11 @@ class SetPersonUseCaseTest{
     @Before
     fun setup() {
         Dispatchers.setMain(mainThreadSurrogate)
+
+        val service = PersonMockService()
+        val api = PersonService(service)
+        val repository = PersonRepository(api)
+        setPersonUseCase = SetPersonUseCase(repository)
     }
 
     @After
@@ -38,17 +43,39 @@ class SetPersonUseCaseTest{
     @Test
     fun `validate result after inserting a person to produce an OK as a result`() = runTest {
         // given
-        val service = PersonMockService()
-        val api = PersonService(service)
-        val repository = PersonRepository(api)
-        setPersonUseCase = SetPersonUseCase(repository)
-        val person = Person(0, "Anthony Chau Frias", "11111111", 1, "Perú")
+        val personID = 0
+        val differentDocumentID = "11111111"
+        val person = Person(
+            personID,
+            PersonMockService.ANTHONY_CHAU_FRIAS.fullName,
+            differentDocumentID,
+            PersonMockService.ANTHONY_CHAU_FRIAS.countryID,
+            PersonMockService.ANTHONY_CHAU_FRIAS.countryName
+        )
 
         // when
         val result: PersonSaveResult = setPersonUseCase(person)
 
         // then
         assertTrue(result is PersonSaveResult.OK)
+    }
+
+    @Test
+    fun `validate result after sending a person to insert to produce an OperationFailed as a result`() = runTest {
+        // given
+        val personID = 0
+        val person = Person(
+            personID,
+            PersonMockService.ANTHONY_CHAU_FRIAS.fullName,
+            PersonMockService.ANTHONY_CHAU_FRIAS.documentID,
+            PersonMockService.ANTHONY_CHAU_FRIAS.countryID,
+            PersonMockService.ANTHONY_CHAU_FRIAS.countryName
+        )
+        // when
+        val result: PersonSaveResult = setPersonUseCase(person)
+
+        // then
+        assertTrue(result is PersonSaveResult.OperationFailed)
     }
 
 }
