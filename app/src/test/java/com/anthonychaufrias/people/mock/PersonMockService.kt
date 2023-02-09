@@ -8,15 +8,16 @@ import retrofit2.Response
 
 class PersonMockService: IPersonService {
     private val results = mutableListOf<Person>()
+    init {
+        loadFakeData()
+    }
+
+    companion object{
+        val ANTHONY_CHAU_FRIAS = Person(1, "Anthony Chau", "12345678", 1, "Perú")
+        val GUILLERMINA_LUBARTI = Person(5, "Guillermina Lubarti", "55555555", 3, "Argentina")
+    }
 
     override suspend fun getPeopleList(search: String): Response<PersonListResponse> {
-        results.add(Person(1, "Anthony Chau", "12345678", 1, "Perú"))
-        results.add(Person(2, "Juana Miranda", "22222222", 2, "Colombia"))
-        results.add(Person(3, "Francisco Tirado", "33333333", 2, "Colombia"))
-        results.add(Person(4, "Juanita Gutierrez", "44444444", 1, "Perú"))
-        results.add(Person(5, "Guillermina Lubarti", "55555555", 3, "Argentina"))
-        results.add(Person(6, "Juan Perez", "55558888", 3, "Argentina"))
-
         var listFiltered = mutableListOf<Person>()
         val filter = search.lowercase()
 
@@ -64,6 +65,15 @@ class PersonMockService: IPersonService {
             person.documentID == documentID &&
             person.personID != personID
         }
+    }
+
+    private fun loadFakeData(){
+        results.add(ANTHONY_CHAU_FRIAS)
+        results.add(Person(2, "Juana Miranda", "22222222", 2, "Colombia"))
+        results.add(Person(3, "Francisco Tirado", "33333333", 2, "Colombia"))
+        results.add(Person(4, "Juanita Gutierrez", "44444444", 1, "Perú"))
+        results.add(GUILLERMINA_LUBARTI)
+        results.add(Person(6, "Juan Perez", "55558888", 3, "Argentina"))
     }
 
 }
