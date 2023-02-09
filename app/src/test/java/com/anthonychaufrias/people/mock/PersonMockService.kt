@@ -36,8 +36,18 @@ class PersonMockService: IPersonService {
     }
 
     override suspend fun addPerson(person: Person): Response<PersonSaveResponse> {
-        person.personID = results.size
-        val saveResponse = PersonSaveResponse("Ok", person, "")
+        var status = ""
+        var message = ""
+        if(findPersonBy(person.documentID, person.personID) == null ){
+            person.personID = results.size
+            status = "Ok"
+        }
+        else{
+            status = "Failed"
+            message = "Documento duplicado. Por favor ingrese otro"
+        }
+
+        val saveResponse = PersonSaveResponse(status, person, message)
         return Response.success(saveResponse)
     }
 
@@ -48,4 +58,12 @@ class PersonMockService: IPersonService {
     override suspend fun deletePerson(person: Person): Response<PersonSaveResponse> {
         TODO("Not yet implemented")
     }
+
+    private fun findPersonBy(documentID: String, personID: Int): Person?{
+        return results.find { person ->
+            person.documentID == documentID &&
+            person.personID != personID
+        }
+    }
+
 }
