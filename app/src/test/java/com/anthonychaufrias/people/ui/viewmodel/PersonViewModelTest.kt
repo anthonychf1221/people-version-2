@@ -21,7 +21,7 @@ class PersonViewModelTest {
     @get: Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var personaViewModel: PersonViewModel
+    private lateinit var personViewModel: PersonViewModel
     private val mainThreadSurrogate = newSingleThreadContext("UI thread")
 
     @Before
@@ -35,7 +35,7 @@ class PersonViewModelTest {
         val setPersonUseCase = SetPersonUseCase(repository)
         val updatePersonUseCase = UpdatePersonUseCase(repository)
 
-        personaViewModel = PersonViewModel(repository, setPersonUseCase, updatePersonUseCase)
+        personViewModel = PersonViewModel(repository, setPersonUseCase, updatePersonUseCase)
     }
 
     @After
@@ -48,14 +48,14 @@ class PersonViewModelTest {
     fun `validate the size of the entire people list`() {
         // given
         val search: String = ""
-        personaViewModel.peopleList.clear()
+        personViewModel.peopleList.clear()
 
         // when
-        personaViewModel.loadPeopleList(search)
+        personViewModel.loadPeopleList(search)
 
         // then
-        val result = personaViewModel.liveDataPeopleList.getOrAwaitValue()
+        val result = personViewModel.liveDataPeopleList.getOrAwaitValue()
         assertTrue(result.size == 6)
-        assertTrue(personaViewModel.peopleList.size == 6)
+        assertTrue(personViewModel.peopleList.size == 6)
     }
 }
