@@ -7,9 +7,9 @@ import com.anthonychaufrias.people.data.service.IPersonService
 import retrofit2.Response
 
 class PersonMockService: IPersonService {
+    private val results = mutableListOf<Person>()
 
     override suspend fun getPeopleList(search: String): Response<PersonListResponse> {
-        val results = mutableListOf<Person>()
         results.add(Person(1, "Anthony Chau", "12345678", 1, "Perú"))
         results.add(Person(2, "Juana Miranda", "22222222", 2, "Colombia"))
         results.add(Person(3, "Francisco Tirado", "33333333", 2, "Colombia"))
@@ -36,6 +36,7 @@ class PersonMockService: IPersonService {
     }
 
     override suspend fun addPerson(person: Person): Response<PersonSaveResponse> {
+        person.personID = results.size
         val saveResponse = PersonSaveResponse("Ok", person, "")
         return Response.success(saveResponse)
     }
