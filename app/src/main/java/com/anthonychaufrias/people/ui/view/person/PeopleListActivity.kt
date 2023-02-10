@@ -10,22 +10,44 @@ import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import com.anthonychaufrias.people.R
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.anthonychaufrias.people.core.RetrofitHelper
 import com.anthonychaufrias.people.core.Values
+import com.anthonychaufrias.people.data.PersonRepository
 import com.anthonychaufrias.people.data.model.Person
+import com.anthonychaufrias.people.data.service.IPersonService
+import com.anthonychaufrias.people.data.service.PersonService
+import com.anthonychaufrias.people.domain.SetPersonUseCase
+import com.anthonychaufrias.people.domain.UpdatePersonUseCase
 import com.anthonychaufrias.people.ui.viewmodel.PersonViewModel
 import kotlinx.android.synthetic.main.activity_people_list.*
 
 class PeopleListActivity : AppCompatActivity() {
     private lateinit var viewModel: PersonViewModel
 
+    private val retrofit = RetrofitHelper.getRetrofit()
+    private val service = retrofit.create(IPersonService::class.java)
+    private val api = PersonService(service)
+    private val repository = PersonRepository(api)
+    private val setPersonUseCase = SetPersonUseCase(repository)
+    private val updatePersonUseCase = UpdatePersonUseCase(repository)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_people_list)
         setToolbar()
-        viewModel = ViewModelProvider(this).get(PersonViewModel::class.java)
+
+        viewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return PersonViewModel(repository, setPersonUseCase, updatePersonUseCase) as T
+            }
+        })[PersonViewModel::class.java]
+
         initUI()
         fabNewPerson.setOnClickListener { view ->
             val intent = Intent(this, PersonSaveActivity::class.java)

@@ -22,8 +22,7 @@ object ValidatePersonUseCase {
     }
 }
 
-class SetPersonUseCase {
-    private val repository = PersonRepository()
+class SetPersonUseCase(private val repository: PersonRepository) {
 
     suspend operator fun invoke(person: Person): PersonSaveResult {
         val validations = ValidatePersonUseCase.getFormValidation(person.fullName, person.documentID)
@@ -42,8 +41,7 @@ class SetPersonUseCase {
     }
 }
 
-class UpdatePersonUseCase {
-    private val repository = PersonRepository()
+class UpdatePersonUseCase(private val repository: PersonRepository) {
 
     suspend operator fun invoke(person: Person): PersonSaveResult {
         val validations = ValidatePersonUseCase.getFormValidation(person.fullName, person.documentID)

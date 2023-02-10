@@ -13,15 +13,11 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class CountryViewModel : ViewModel(){
-    private val retrofit = RetrofitHelper.getRetrofit()
-    private val service: ICountryService = retrofit.create(ICountryService::class.java)
-
+class CountryViewModel(private val repository: CountryRepository) : ViewModel(){
     val liveDataCountryList = MutableLiveData<List<Country>>()
     val countryList  = mutableListOf<Country>()
     val countryNamesList = mutableListOf<String>()
     var selectedIndex: Int = 0
-    private val repository = CountryRepository()
 
     fun loadCountryList(selectedId:Int){
         viewModelScope.launch {

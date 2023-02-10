@@ -9,12 +9,23 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.anthonychaufrias.people.R
+import com.anthonychaufrias.people.core.RetrofitHelper
 import com.anthonychaufrias.people.core.Values
+import com.anthonychaufrias.people.data.CountryRepository
+import com.anthonychaufrias.people.data.PersonRepository
 import com.anthonychaufrias.people.data.model.Person
 import com.anthonychaufrias.people.data.model.PersonSaveResult
 import com.anthonychaufrias.people.data.model.ValidationResult
+import com.anthonychaufrias.people.data.service.CountryService
+import com.anthonychaufrias.people.data.service.ICountryService
+import com.anthonychaufrias.people.data.service.IPersonService
+import com.anthonychaufrias.people.data.service.PersonService
+import com.anthonychaufrias.people.domain.SetPersonUseCase
+import com.anthonychaufrias.people.domain.UpdatePersonUseCase
 import com.anthonychaufrias.people.ui.viewmodel.CountryViewModel
 import com.anthonychaufrias.people.ui.viewmodel.PersonViewModel
 import com.google.android.material.snackbar.Snackbar
@@ -26,6 +37,19 @@ class PersonSaveActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
     private lateinit var objPerson: Person
     private var action: Int = 0
     private var countryPosition: Int = 0
+
+    private val retrofit = RetrofitHelper.getRetrofit()
+
+    private val personService = retrofit.create(IPersonService::class.java)
+    private val personApi = PersonService(personService)
+    private val personaRepository = PersonRepository(personApi)
+    private val setPersonUseCase = SetPersonUseCase(personaRepository)
+    private val updatePersonUseCase = UpdatePersonUseCase(personaRepository)
+
+    private val countryService = retrofit.create(ICountryService::class.java)
+    private val countryApi = CountryService(countryService)
+    private val countryRepository = CountryRepository(countryApi)
+
     companion object {
         @JvmStatic val ARG_ITEM: String = "objPerson"
         @JvmStatic val ARG_ACTION: String = "action"
@@ -39,9 +63,27 @@ class PersonSaveActivity : AppCompatActivity(), AdapterView.OnItemSelectedListen
         action = intent.getIntExtra(ARG_ACTION, Values.INSERT) as Int
         setToolbar()
 
-        countryViewModel = ViewModelProvider(this).get(CountryViewModel::class.java)
-        personViewModel  = ViewModelProvider(this).get(PersonViewModel::class.java)
+        createCountryViewModel()
+        createPersonViewModel()
         initUI()
+    }
+
+    private fun createPersonViewModel(){
+        personViewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return PersonViewModel(personaRepository, setPersonUseCase, updatePersonUseCase) as T
+            }
+        })[PersonViewModel::class.java]
+    }
+
+    private fun createCountryViewModel(){
+        countryViewModel = ViewModelProviders.of(this, object : ViewModelProvider.Factory {
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                @Suppress("UNCHECKED_CAST")
+                return CountryViewModel(countryRepository) as T
+            }
+        })[CountryViewModel::class.java]
     }
 
     private fun initUI(){

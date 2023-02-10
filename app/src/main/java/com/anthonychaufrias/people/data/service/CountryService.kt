@@ -1,15 +1,12 @@
 package com.anthonychaufrias.people.data.service
 
-import com.anthonychaufrias.people.core.RetrofitHelper
 import com.anthonychaufrias.people.data.model.Country
 import com.anthonychaufrias.people.data.model.CountryListResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Response
 
-class CountryService {
-    private val retrofit = RetrofitHelper.getRetrofit()
-    private val service = retrofit.create(ICountryService::class.java)
+class CountryService(private val service: ICountryService) {
 
     suspend fun getCountryList(): List<Country> {
         return withContext(Dispatchers.IO){
