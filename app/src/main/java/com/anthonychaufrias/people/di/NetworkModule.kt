@@ -20,6 +20,7 @@ object NetworkModule {
         return Retrofit.Builder()
             .baseUrl("http://ticsolu.com/mvvm/api/v.1.2/")
             .addConverterFactory(GsonConverterFactory.create())
+            .client(PeopleHttpClient.getClient())
             .build()
     }
 
